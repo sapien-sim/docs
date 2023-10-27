@@ -6,12 +6,12 @@ The robot is an instance of articulation.
 Concepts:
     - Create an articulation
     - Control the articulation basically (builtin position and velocity controller)
-        sapien.Articulation.set_qf, sapien.Joint.set_drive_velocity_target
-    - sapien.Articulation.get_qpos, sapien.Articulation.get_qvel
+        sapien.physx.PhysxArticulation.set_qf, sapien.physx.PhysxArticulationJoint.set_drive_velocity_target
+    - sapien.physx.PhysxArticulation.get_qpos, sapien.physx.PhysxArticulation.get_qvel
 """
 
-import sapien.core as sapien
-from sapien.utils.viewer import Viewer
+import sapien as sapien
+from sapien.utils import Viewer
 import numpy as np
 from transforms3d.euler import euler2quat
 
@@ -23,7 +23,7 @@ def create_car(
         joint_friction=0.0,
         joint_damping=0.0,
         density=1.0,
-) -> sapien.Articulation:
+) -> sapien.physx.PhysxArticulation:
     body_half_size = np.array(body_size) / 2
     shaft_half_size = np.array([tire_radius * 0.1, tire_radius * 0.1, body_size[2] * 0.1])
     rack_half_size = np.array([tire_radius * 0.1, body_half_size[1] * 2.0, tire_radius * 0.1])
@@ -33,14 +33,14 @@ def create_car(
     body: sapien.LinkBuilder = builder.create_link_builder()  # LinkBuilder is similar to ActorBuilder
     body.set_name('body')
     body.add_box_collision(half_size=body_half_size, density=density)
-    body.add_box_visual(half_size=body_half_size, color=[0.8, 0.6, 0.4])
+    body.add_box_visual(half_size=body_half_size, material=[0.8, 0.6, 0.4])
 
     # front steering shaft
     front_shaft = builder.create_link_builder(body)
     front_shaft.set_name('front_shaft')
     front_shaft.set_joint_name('front_shaft_joint')
     front_shaft.add_box_collision(half_size=shaft_half_size, density=density)
-    front_shaft.add_box_visual(half_size=shaft_half_size, color=[0.6, 0.4, 0.8])
+    front_shaft.add_box_visual(half_size=shaft_half_size, material=[0.6, 0.4, 0.8])
     # The x-axis of the joint frame is the rotation axis of a revolute joint.
     front_shaft.set_joint_properties(
         'revolute',
@@ -64,7 +64,7 @@ def create_car(
     back_shaft.set_name('back_shaft')
     back_shaft.set_joint_name('back_shaft_joint')
     back_shaft.add_box_collision(half_size=shaft_half_size, density=density)
-    back_shaft.add_box_visual(half_size=shaft_half_size, color=[0.6, 0.4, 0.8])
+    back_shaft.add_box_visual(half_size=shaft_half_size, material=[0.6, 0.4, 0.8])
     back_shaft.set_joint_properties(
         'fixed',
         limits=[],
@@ -86,19 +86,19 @@ def create_car(
     front_wheels.set_joint_name('front_gear')
     # rack
     front_wheels.add_box_collision(half_size=rack_half_size, density=density)
-    front_wheels.add_box_visual(half_size=rack_half_size, color=[0.8, 0.4, 0.6])
+    front_wheels.add_box_visual(half_size=rack_half_size, material=[0.8, 0.4, 0.6])
     # left wheel
     front_wheels.add_sphere_collision(pose=sapien.Pose(p=[0.0, rack_half_size[1] + tire_radius, 0.0]),
                                       radius=tire_radius, density=density)
     front_wheels.add_sphere_visual(pose=sapien.Pose(p=[0.0, rack_half_size[1] + tire_radius, 0.0]),
                                    radius=tire_radius,
-                                   color=[0.4, 0.6, 0.8])
+                                   material=[0.4, 0.6, 0.8])
     # right wheel
     front_wheels.add_sphere_collision(pose=sapien.Pose(p=[0.0, -(rack_half_size[1] + tire_radius), 0.0]),
                                       radius=tire_radius, density=density)
     front_wheels.add_sphere_visual(pose=sapien.Pose(p=[0.0, -(rack_half_size[1] + tire_radius), 0.0]),
                                    radius=tire_radius,
-                                   color=[0.4, 0.6, 0.8])
+                                   material=[0.4, 0.6, 0.8])
     # gear
     front_wheels.set_joint_properties(
         'revolute',
@@ -121,19 +121,19 @@ def create_car(
     back_wheels.set_joint_name('back_gear')
     # rack
     back_wheels.add_box_collision(half_size=rack_half_size, density=density)
-    back_wheels.add_box_visual(half_size=rack_half_size, color=[0.8, 0.4, 0.6])
+    back_wheels.add_box_visual(half_size=rack_half_size, material=[0.8, 0.4, 0.6])
     # left wheel
     back_wheels.add_sphere_collision(pose=sapien.Pose(p=[0.0, rack_half_size[1] + tire_radius, 0.0]),
                                      radius=tire_radius, density=density)
     back_wheels.add_sphere_visual(pose=sapien.Pose(p=[0.0, rack_half_size[1] + tire_radius, 0.0]),
                                   radius=tire_radius,
-                                  color=[0.4, 0.6, 0.8])
+                                  material=[0.4, 0.6, 0.8])
     # right wheel
     back_wheels.add_sphere_collision(pose=sapien.Pose(p=[0.0, -(rack_half_size[1] + tire_radius), 0.0]),
                                  radius=tire_radius, density=density)
     back_wheels.add_sphere_visual(pose=sapien.Pose(p=[0.0, -(rack_half_size[1] + tire_radius), 0.0]),
                                   radius=tire_radius,
-                                  color=[0.4, 0.6, 0.8])
+                                  material=[0.4, 0.6, 0.8])
     # gear
     back_wheels.set_joint_properties(
         'revolute',
@@ -155,7 +155,7 @@ def create_car(
     return car
 
 
-def get_joints_dict(articulation: sapien.Articulation):
+def get_joints_dict(articulation: sapien.physx.PhysxArticulation):
     joints = articulation.get_joints()
     joint_names =  [joint.name for joint in joints]
     assert len(joint_names) == len(set(joint_names)), 'Joint names are assumed to be unique.'
@@ -180,15 +180,9 @@ def parse_args():
 def main():
     args = parse_args()
 
-    engine = sapien.Engine()
-    renderer = sapien.SapienRenderer()
-    engine.set_renderer(renderer)
+    scene = sapien.Scene()
+    sapien.physx.set_default_material(args.static_friction, args.dynamic_friction, args.restitution)
 
-    scene_config = sapien.SceneConfig()
-    scene_config.default_static_friction = args.static_friction
-    scene_config.default_dynamic_friction = args.dynamic_friction
-    scene_config.default_restitution = args.restitution
-    scene = engine.create_scene(scene_config)
     scene.set_timestep(1 / 100.0)
 
     # ---------------------------------------------------------------------------- #
@@ -200,8 +194,7 @@ def main():
     print('The dof of the articulation is', car.dof)
     # ---------------------------------------------------------------------------- #
 
-    viewer = Viewer(renderer)
-    viewer.set_scene(scene)
+    viewer = scene.create_viewer()
 
     viewer.set_camera_xyz(x=-12, y=0, z=15)
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
@@ -220,7 +213,7 @@ def main():
     joints['front_shaft_joint'].set_drive_property(stiffness=1000.0, damping=0.0)  # front shaft
     joints['front_gear'].set_drive_property(0.0, 1000.0)  # front gear
     joints['back_gear'].set_drive_property(0.0, 0.0)  # back gear
-    limits = np.rad2deg(joints['front_shaft_joint'].get_limits()[0])
+    limits = np.rad2deg(joints['front_shaft_joint'].get_limit()[0])
 
     position = 0.0  # position target of joints
     velocity = 0.0  # velocity target of joints
@@ -256,7 +249,7 @@ def main():
                 joints['front_shaft_joint'].set_drive_target(position)
                 joints['front_gear'].set_drive_velocity_target(velocity)
 
-        car.set_qf(car.compute_passive_force(True, True, False))
+        car.set_qf(car.compute_passive_force(True, True))
         scene.step()
         scene.update_render()
         viewer.render()

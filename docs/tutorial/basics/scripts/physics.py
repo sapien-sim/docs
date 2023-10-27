@@ -2,23 +2,22 @@
 
 This script provides an example where an object is sliding down the slope and bouncing on the ground.
 The user can modify physical properties, like static and dynamic friction, to see different behaviors.
-The default physical properties can be modified through sapien.SceneConfig.
+The default physical properties can be modified through sapien.PhysxSceneConfig.
 The physical material can be specified before each actor is built.
 
 Concepts:
-    - sapien.SceneConfig containing default physical parameters
-    - sapien.PhysicalMaterial (created by sapien.Scene only)
+    - sapien.physx.PhysxSceneConfig containing default physical parameters
+    - sapien.physx.PhysxMaterial
     - kinematic actors
-    - sapien.Actor.set_damping
+    - sapien.physx.PhysxRigidBodyComponent.set_linear_damping, sapien.physx.PhysxRigidBodyComponent.set_angular_damping
     - Get kinematic quantities through
-        sapien.Actor.get_pose(), sapien.Actor.get_velocity(), sapien.Actor.get_angular_velocity()
+        sapien.Entity.get_pose(), sapien.physx.PhysxRigidBodyComponent.get_linear_velocity(), sapien.physx.PhysxRigidBodyComponent.get_angular_velocity()
 """
 
-import sapien.core as sapien
-from sapien.utils.viewer import Viewer
+import sapien as sapien
+from sapien.utils import Viewer
 import numpy as np
 from  transforms3d.quaternions import axangle2quat
-
 
 def create_box(
         scene: sapien.Scene,
@@ -27,9 +26,9 @@ def create_box(
         color=None,
         is_kinematic=False,
         density=1000.0,
-        physical_material: sapien.PhysicalMaterial = None,
+        physical_material: sapien.physx.PhysxMaterial = None,
         name='',
-) -> sapien.Actor:
+) -> sapien.Entity:
     """Create a box.
 
     Args:
@@ -43,12 +42,12 @@ def create_box(
         name: name of the actor.
 
     Returns:
-        sapien.Actor
+        sapien.Entity
     """
     half_size = np.array(half_size)
     builder = scene.create_actor_builder()
     builder.add_box_collision(half_size=half_size, material=physical_material, density=density)  # Add collision shape
-    builder.add_box_visual(half_size=half_size, color=color)  # Add visual shape
+    builder.add_box_visual(half_size=half_size, material=color)  # Add visual shape
     if is_kinematic:
         box = builder.build_kinematic(name=name)
     else:
@@ -63,13 +62,13 @@ def create_sphere(
         radius,
         color=None,
         density=1000.0,
-        physical_material: sapien.PhysicalMaterial = None,
+        physical_material: sapien.physx.PhysxMaterial = None,
         name='',
-) -> sapien.Actor:
+) -> sapien.Entity:
     """Create a sphere."""
     builder = scene.create_actor_builder()
     builder.add_sphere_collision(radius=radius, material=physical_material, density=density)
-    builder.add_sphere_visual(radius=radius, color=color)
+    builder.add_sphere_visual(radius=radius, material=color)
     sphere = builder.build(name=name)
     sphere.set_pose(pose)
     return sphere
@@ -99,24 +98,32 @@ def parse_args():
 def main():
     args = parse_args()
 
-    engine = sapien.Engine()
-    renderer = sapien.SapienRenderer()
-    engine.set_renderer(renderer)
-
-    scene_config = sapien.SceneConfig()
+    scene_config = sapien.physx.PhysxSceneConfig()
     # The default physical properties can be modified through sapien.SceneConfig
     print(scene_config.gravity)
-    print(scene_config.default_static_friction)
-    print(scene_config.default_dynamic_friction)
-    print(scene_config.default_restitution)
     scene_config.gravity = np.array([0.0, 0.0, args.gravity])
-    scene = engine.create_scene(scene_config)
+
+    # SAPIEN's default physical material for PhysX can be modified at any time
+    # It is not bound to a scene
+    default_material = sapien.physx.get_default_material()
+    print(default_material.static_friction)
+    print(default_material.dynamic_friction)
+    print(default_material.restitution)
+    sapien.physx.set_default_material(
+        static_friction=0.3, dynamic_friction=0.3, restitution=0.0)
+
+    # by default, SAPIEN scene consists of PhysxSystem and RenderSystem
+    # The PhysxSystem can take a PhysxSceneConfig to custom its behavior
+    scene = sapien.Scene([
+        sapien.physx.PhysxSystem(scene_config),
+        sapien.render.RenderSystem(),
+    ])
     scene.set_timestep(1 / 100.0)
 
     # ---------------------------------------------------------------------------- #
     # Sliding/Rolling down the slope
     # ---------------------------------------------------------------------------- #
-    physical_material: sapien.PhysicalMaterial = scene.create_physical_material(
+    physical_material: sapien.physx.PhysxMaterial = sapien.physx.PhysxMaterial(
         static_friction=args.static_friction,
         dynamic_friction=args.dynamic_friction,
         restitution=args.restitution,
@@ -182,15 +189,16 @@ def main():
     else:
         raise NotImplementedError()
 
-    actor.set_damping(linear=args.linear_damping, angular=args.angular_damping)
+    rigid_component = actor.find_component_by_type(sapien.physx.PhysxRigidBodyComponent)
+    rigid_component.set_linear_damping(args.linear_damping)
+    rigid_component.set_angular_damping(args.angular_damping)
     # ---------------------------------------------------------------------------- #
 
 
     scene.set_ambient_light([0.5, 0.5, 0.5])
     scene.add_directional_light([0, 1, -1], [0.5, 0.5, 0.5])
 
-    viewer = Viewer(renderer)
-    viewer.set_scene(scene)
+    viewer = scene.create_viewer()
 
     viewer.set_camera_xyz(x=-2, y=0, z=2.5)
     viewer.set_camera_rpy(r=0, p=-np.arctan2(2, 2), y=0)
@@ -205,11 +213,11 @@ def main():
             scene.step()
         scene.update_render()
         viewer.render()
-        if steps % 500 == 0:
+        if steps % 10 == 0:
             print('step:', steps)
             print('Pose', actor.get_pose())
-            print('Velocity', actor.get_velocity())
-            print('Angular velocity', actor.get_angular_velocity())
+            print('Velocity', rigid_component.get_linear_velocity())
+            print('Angular velocity', rigid_component.get_angular_velocity())
         steps += 1
 
 

@@ -36,7 +36,7 @@ articulation link with a revolute parent joint, a magenta line will appear to
 indicate the rotation axis. For prismatic parent joint, a cyan line will show
 the translation axis.
 
-Information of the selected actor will be displayed in the ``Actor Window``
+Information of the selected actor will be displayed in the ``Entity Window``
 described in detail below. The figure below shows selecting an actor without a
 movable parent joint and an actor with a parent revolute joint.
 
@@ -74,68 +74,60 @@ operations. ``Move`` slider adjusts movement speed of ``wasd``. ``Rotate``
 adjust the rotating speed when pressing down ``Right Mouse Button``. ``Scroll``
 adjusts the zoom speed in ``Focus Camera Control``.
 
-The ``Name`` selection in ``Camera`` section allows viewing from mounted cameras in the scene. It will
-follow the movement of the selected mounted camera.
+The ``Name`` selection in ``Camera`` section allows viewing from mounted cameras
+in the scene. It will follow the movement of the selected mounted camera. ``Fov
+Y`` changes the FOV of the viewer camera.
 
-The ``Display Settings`` section allows adjusting some display settings. ``Fov
-Y`` changes the FOV of the viewer camera. ``Render Target`` changes the
-displayed texture (texture names are specified in the GLSL shaders provided by
-SAPIEN). ``Resolution`` changes the window resolution (note this may not always
-succeed as window manager can override this setting, for example, it has no
-effect in full-screen mode).
+The ``Display Settings`` section allows adjusting some display settings.
+``Target`` changes the displayed picture (picture names are specified in the
+GLSL shaders provided by SAPIEN). ``Resolution`` changes the window resolution
+(note this may not always succeed as window managers can override this setting,
+for example, it has no effect in full-screen mode).
 
-The ``Actor Selection`` section adjust actor selection behavior. ``Coordinate
-Axes`` checkbox can turn off the axes display. ``Axes Mode`` allows to place
-coordinate axes at actor origin or actor center of mass. ``Axes Scale`` adjusts
-the size of the axes. ``Opacity`` adjusts the opacity of the selected actor.
+The ``Selection`` section adjust entity selection behavior. ``Show Joint Axes``
+allows showing the revoltue/prismatic axes of articulation joints. ``Show Origin
+Frame`` checkbox can turn on/off the axes display. ``Frame Size`` adjusts the
+size of the axes. ``Opacity`` adjusts the opacity of the selected actor.
 
 Finally ``FPS`` displays the current rendering FPS. Note this value does not
 represent the time to render a frame, as it is v-synced and affected by CPU
 operations (simulation, Python code execution, etc.)
 
-Scene Hierarchy Window
+Scene Window
 -------------------------------------------
 
-The ``Scene Hierarchy Window`` by default is located at the bottom-left corner
-of the GUI. It displays information about actors and articulations the scene.
+The ``Scene Window`` by default is located at the bottom-left corner of the GUI.
+It displays information about entities in the scene By expanding the scene, you
+can inspect all entities currently placed in the scene. The currently selected
+entity will be highlighted. ``Left Click`` on any actor will select it as if it
+is clicked in the scene viewport. This allows you to select entities without a
+visual body.
 
-.. image:: assets/scene_window.png
-    :width: 48%
-
-By expanding the scene hierarchy, you can inspect all actors and articulation
-links in currently placed in the scene. The currently selected actor will be
-highlighted. ``Left Click`` on any actor will select it as if it is clicked in
-the scene viewport. This allows you to select actors without a visual body.
-
-Actor Window
+Entity Window
 -------------------------------------------
 
-The ``Actor Window`` by default is located at the top-right corner of the GUI.
-It displays information about the selected actor.
+The ``Entity Window`` by default is located at the top-right corner of the GUI.
+It displays information about the selected entity.
 
-.. image:: assets/actor_window.png
+.. image:: assets/entity_window.png
     :width: 48%
 
-``Actor Window`` first displays the actor ``Name``, ``Type``, ``Id``. Next the
-global position and rotation (quaternion wxyz) are shown.
-    
-The ``Show``, ``Hide`` collision buttons allows to display collision shapes.
-Primitive shapes are displayed in blue while convex meshes are displayed in
-green.
+``Entity Window`` first displays the entity ``name`` and ``per_scene_id``. Next
+the global position and rotation (quaternion wxyz) are shown.
 
-Next the expandable ``Collision Shapes`` shows the collision shapes attached to
-this actor in detail. Depending on the collision type, you can see its
-type-specific information such as radius or scale. Some common attributes are
-the following. ``Contact offset`` the maximum distance where the shape will come
-into contact with other shapes. ``Rest offset`` the distance where the shape
-will collide with other objects (usually 0). ``Patch radius`` and ``Min patch
-radius`` are related to the torsional friction of contact points. ``Is trigger``
-indicates whether this shape is a trigger shape. Trigger shape will not collide
-with other objects but can report when it intersects with other shapes. ``Static
-friction`` and ``Dynamic friction`` are the friction coefficients.
+Next, each attached component will have its own section. For example, an
+``PhysxArticulationLinkComponent`` shows its mass, inertia, collision shapes.
+And allows showing/hiding collision shape with a click.
+
+Each collision shape is expandable. Depending on the collision type, you can see
+its type-specific information such as radius or scale. Some common attributes
+are the following. ``Contact offset`` the maximum distance where the shape will
+come into contact with other shapes. ``Rest offset`` the distance where the
+shape will collide with other objects (usually 0). ``Patch radius`` and ``Min
+patch radius`` are related to the torsional friction of contact points.
+``Static friction`` and ``Dynamic friction`` are the friction coefficients.
 ``Restitution`` is the restitution coefficient of this shape. Next 4 collision
-groups are shown in hexadecimal. Next the collision shape's pose relative to the
-actor is displayed.
+groups are shown in hexadecimal.
 
 Articulation Window
 -------------------------------------------
@@ -149,28 +141,30 @@ the GUI. It displays information about the parent articulation of selected actor
 First, the ``Name``, ``Type`` and ``Base Link Id`` of the articulation are
 displayed. Next in the expandable section ``Joints``. The joint position and
 joint name for each joint is displayed. On the right of the joint names, there
-are some arrows to allow further expand each joint. When expanded, you can
-change the ``Drive Target``, ``Damping``, ``Stiffness``, ``Force Limit``, and
-``Friction`` of this joint. Simply type in the desired number and press
+are some ``+`` buttons to allow further expanding each joint. When expanded, you
+can change the ``Drive Target``, ``Damping``, ``Stiffness``, ``Force Limit``,
+and ``Friction`` of this joint. Simply type in the desired number and press
 ``Enter``. The ``Acceleration`` checkbox indicates whether this joint is driven
 by force or acceleration. When driven by acceleration, the drive force scales
 automatically by the mass and inertia of the driven object. Finally, the
 ``Show``, ``Hide`` collision buttons are a convenient way to see the collision
 shapes for the entire articulation.
 
-Move Objects
+Transform Window
 -------------------------------------------
 
-When any object is selected, you may press ``g`` to enter ``Grab Mode`` or ``r``
-to enter ``Rotate Mode``. These functions are analogous to the blender ``g`` and
-``r`` features. Basically these allows you to move and rotate objects with mouse
-move. To gain finer control, you may additionally press ``x``, ``y``, or ``z``
-to translate/rotate around a specific axis. For example, ``g-x`` will only let
-you move in the global ``x`` axis. Next if ``x`` is pressed twice (``g-x-x``),
-it will only let you move in the local ``x`` axis. For grab, if ``Shift`` is
-pressed when pressing the axis button, you will enter a plane move mode. For
-example, ``g-X`` allows you to move in the global YZ plane. ``g-X-X`` allows you
-to move in the local YZ plane.
+The ``Transform Window`` allows you to move objects in the scene directly. When
+enabled, A gizmo will be placed at the origin of the selected entity. Dragging
+the handles will display a translucent image of the object being moved, and
+clicking on teleport will set the pose of the selected entity to the new pose.
+The gizmo control can be fine-tuned in the ``Transform Window`` to allow
+translating and rotating in local or world frame.
 
-For this functionality, trying it out will probably be easier than reading this
-tutorial.
+.. image:: assets/transform_window.png
+    :width: 100%
+
+If the selected entity has a ``PhysxArticulationLinkComponent``, the Gizmo
+additionally spuports moving with inverse kinematics (IK). The joints that are
+allowed to particilate in IK computation can be changed in the ``Move Group``.
+Now dragging the Gizmo will invoke an IK solver to compute proper articulation
+joint angles.

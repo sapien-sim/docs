@@ -5,7 +5,7 @@ Welcome to SAPIEN documentation!
    :maxdepth: 3
    :caption: Tutorial
 
-   tutorial/get_started/index
+   tutorial/basics/index
 
 This site is intended for SAPIEN documentation for development, not for production.
 

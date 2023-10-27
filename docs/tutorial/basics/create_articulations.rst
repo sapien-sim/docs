@@ -28,7 +28,7 @@ The example illustrates how to build a controllable toy car from scratch.
     :align: center
     :figclass: align-center
 
-The full script can be downloaded here :download:`create_articulations.py <../../../../examples/get_started/create_articulations.py>`
+The full script can be downloaded here :download:`create_articulations.py <scripts/create_articulations.py>`
 
 Create a root link
 -------------------------------------------
@@ -37,7 +37,7 @@ In SAPIEN, the articulation is represented as a tree.
 Each node is a link, and each edge indicates that the child link is connected to the parent link by a joint.
 To build a toy car, let's start with the car body.
 
-.. literalinclude:: ../../../../examples/get_started/create_articulations.py
+.. literalinclude:: scripts/create_articulations.py
    :dedent: 0
    :lines: 19-36
    :emphasize-lines: 12,15
@@ -52,7 +52,7 @@ Create a child link connected by a revolute joint
 
 Next, we create a child link (front steering shaft) connected to the root link (car body) by a revolute joint.
 
-.. literalinclude:: ../../../../examples/get_started/create_articulations.py
+.. literalinclude:: scripts/create_articulations.py
    :dedent: 0
    :lines: 38-60
 
@@ -76,7 +76,7 @@ Control an articulation with builtin drives
 After building the articulation, we want to control it by actuating its joints.
 SAPIEN provides builtin **drives** (controllers) to control either the position or the speed of a joint.
 
-.. literalinclude:: ../../../../examples/get_started/create_articulations.py
+.. literalinclude:: scripts/create_articulations.py
    :dedent: 0
    :lines: 158-162
 
@@ -84,11 +84,11 @@ All the joints of an articulation can be acquired by ``get_joints()``.
 
 .. note::
    Although the order of joints returned by ``get_joints()`` is fixed, it is recommended to index a joint by its name.
-   Joint names should be unique, which is not forced in SAPIEN though. 
+   Ideally joint names should be unique, but SAPIEN does not enforce it.
 
-.. literalinclude:: ../../../../examples/get_started/create_articulations.py
+.. literalinclude:: scripts/create_articulations.py
    :dedent: 0
-   :lines: 218-222
+   :lines: 211-216
 
 For each active joint (with non-zero degree of freedom), we can set its drive properties: ``stiffness`` and ``damping``.
 They implies the extent to which the drive attempts to achieve the target position and velocity respectively.
@@ -103,9 +103,9 @@ Since our toy car is designed to be a front-wheel drive car, we set both the sti
 We can implement different behaviors when different keys are pressed.
 ``set_drive_target(...)`` and ``set_drive_velocity_target(...)`` are called to set the target position and velocity of a joint drive.
 
-.. literalinclude:: ../../../../examples/get_started/create_articulations.py
+.. literalinclude:: scripts/create_articulations.py
    :dedent: 0
-   :lines: 225-257
+   :lines: 218-250
 
 Get kinematic quantities of the articulation
 ------------------------------------------------------------
@@ -116,9 +116,9 @@ Besides, joint positions and velocities can be acquired by ``get_qpos()`` and ``
 They both return a list of scalars, the length of which is the total degree of freedom.
 The order is the same as ``get_joints()``.
 
-.. literalinclude:: ../../../../examples/get_started/create_articulations.py
+.. literalinclude:: scripts/create_articulations.py
    :dedent: 0
-   :lines: 266-268
+   :lines: 259-261
 
 Remove an articulation
 -------------------------------------------
@@ -126,3 +126,23 @@ Remove an articulation
 Similar to removing an actor, ``scene.remove_articulation(articulation)`` will
 remove it from the scene. Using the articulation or any of its links or joints
 after removal will result in undefined behavior (usually a crash).
+
+
+Under the hood implementation
+-------------------------------------------
+
+The articulation builder hides complex logic for managing articulations. This
+section goes deeper into how ``PhysxArticulation`` is managed in SAPIEN for more
+advanced users.
+
+A ``PhysXArticulation`` originates from individual ``PhysxArticulationLink``
+that can be attached to an ``Entity`` just like other SAPIEN ``Component``. Each
+``PhysxArticulationLink`` may specify a parent ``PhysxArticulationLink``, and
+all links sharing a common root is considered part of the same articulation. All
+links of the same articulation share a single ``PhysxArticulation`` object,
+which can be retrieved with ``PhysxArticulationLink.articulation``.
+
+It is possible to dynamically add or remove links to an articulation, however,
+the associated ``PhysxArticulation`` will be invalidated and should be obtained
+again from a link from the new articulation. This use case is not covered here
+for simplicity.

@@ -9,7 +9,7 @@ SAPIEN is distributed via `PyPI <https://pypi.org/project/sapien/>`_.
 
 Currently supported Python versions:
 
-* Python 3.7, 3.8, 3.9, 3.10, 3.11, 3.12
+* Python 3.8, 3.9, 3.10, 3.11, 3.12
 
 Supported operating systems:
 
@@ -86,7 +86,7 @@ Server (no display)
 ^^^^^^^^^^^^^^^^^^^^^^^
 .. warning::
 
-   This script will generate ``output.png`` at the current working directory.
+   This script will generate ``sapien_offscreen.png`` at the current working directory.
 
 You may test the offscreen rendering of SAPIEN with the following command
 
@@ -98,7 +98,7 @@ On a server without display. It may generate errors about the display. You can
 ignore these warnings.
 
 If SAPIEN is installed properly. The following image will be generated at the
-current working directory, named ``output.png``.
+current working directory, named ``sapien_offscreen.png``.
 
 .. figure:: assets/example.offscreen.png
     :width: 120px
