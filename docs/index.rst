@@ -6,6 +6,7 @@ Welcome to SAPIEN documentation!
    :caption: Tutorial
 
    tutorial/basics/index
+   tutorial/sapien/index
 
 This site is intended for SAPIEN documentation for development, not for production.
 
