@@ -9,6 +9,8 @@ Scene
 Everything simulated or rendered needs to live in a 3D world. SAPIEN calls this
 world ``Scene``. A scene is simply constructed with ``sapien.Scene()``. A scene
 does 2 things: holding a list of ``Entity`` and managing a list of ``System``.
+We will now explain the role of ``Entity`` and ``System``.
+
 
 Entity
 -----------
