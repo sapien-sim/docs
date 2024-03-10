@@ -12,13 +12,5 @@ and rendering are implemented with these building blocks.
 :titlesonly:
 
 entity
-physx
-render
+lifecycle
 ```
-
-<!-- .. toctree:: -->
-
-<!--    entity -->
-<!--    physx -->
-<!--    render -->
-<!--    actor_builder -->

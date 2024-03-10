@@ -22,6 +22,7 @@ rendering/camera
 rendering/raytracing_renderer
 rendering/customize_shaders
 rendering/depth_sensor
+rendering/vr
 ```
 
 ```{toctree}
@@ -35,4 +36,5 @@ robotics/pid
 :caption: Advanced
 
 advanced/concepts
+advanced/components
 ```
