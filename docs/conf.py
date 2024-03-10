@@ -3,12 +3,15 @@ author = 'SAPIEN-TEAM'
 release = "3.0"
 extensions = [
     'sphinx.ext.autodoc',
-    'sphinx_rtd_theme',
     'sphinx.ext.intersphinx',
     'sphinx.ext.mathjax',
     'sphinx.ext.viewcode',
     'sphinx.ext.githubpages',
-    'sphinx.ext.todo'
+    'sphinx.ext.todo',
+    "sphinx_copybutton",
+    "myst_parser",
+    "sphinx_design",
+    "sphinx_subfigure",
 ]
 todo_include_todos = True
 source_suffix = ['.rst', '.md']
@@ -18,17 +21,27 @@ source_parsers = {
 master_doc = 'index'
 templates_path = ['_templates']
 exclude_patterns = []
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
 
+html_context = {
+    "display_github": True,
+    "github_user": "sapien-sim",
+    "github_repo": "docs",
+    "github_version": "main",
+    "conf_py_path": "docs/source/"
+}
+
 html_theme_options = {
-    'canonical_url': '',
-    'logo_only': False,
-    'display_version': True,
-    'prev_next_buttons_location': 'bottom',
-    'style_nav_header_background': '#1565c0',
-    'sticky_navigation': True,
-    'navigation_depth': 4,
-    'includehidden': True,
-    'titles_only': False
+    "use_edit_page_button": True,
+    "icon_links": [
+        {
+            "name": "GitHub",
+            "url": "https://github.com/sapien-sim/docs",
+            "icon": "fa-brands fa-github",
+        }
+    ],
+}
+myst_enable_extensions = {
+    "colon_fence"
 }
