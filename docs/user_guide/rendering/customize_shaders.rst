@@ -491,8 +491,8 @@ Modify the camera and viewer shader directory to the new `rt-variance` folder.
 
 .. code-block:: python
 
-    sapien.render_config.camera_shader_dir = "./rt-variance"
-    sapien.render_config.viewer_shader_dir = "./rt-variance"
+    sapien.render.set_camera_shader_dir("./rt-variance")
+    sapien.render.set_viewer_shader_dir("./rt-variance")
 
 
 Add a new output texture
