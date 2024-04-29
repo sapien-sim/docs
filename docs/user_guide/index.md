@@ -33,6 +33,13 @@ robotics/pid
 ```
 
 ```{toctree}
+:caption: Reinforcement learning
+
+rl/gym.rst
+rl/manipulation.rst
+```
+
+```{toctree}
 :caption: Advanced
 
 advanced/concepts
