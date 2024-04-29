@@ -30,13 +30,14 @@ rendering/vr
 
 robotics/basic_robot
 robotics/pid
+robotics/motion_planning
 ```
 
 ```{toctree}
 :caption: Reinforcement learning
 
-rl/gym.rst
-rl/manipulation.rst
+rl/gym
+rl/manipulation
 ```
 
 ```{toctree}

@@ -17,6 +17,14 @@ Core features:
 user_guide/index
 ```
 
+```{toctree}
+:maxdepth: 2
+:caption: API Documentation
+
+api/modules
+```
+
+
 <!-- .. toctree:: -->
 <!-- This site is intended for SAPIEN documentation for development, not for production. -->
 
