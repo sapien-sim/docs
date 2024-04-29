@@ -1,5 +1,3 @@
-# By Jet <i@jetd.me>
-#
 import sapien
 import numpy as np
 import transforms3d.euler

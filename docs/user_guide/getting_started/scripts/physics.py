@@ -102,6 +102,7 @@ def main():
     # The default physical properties can be modified through sapien.SceneConfig
     print(scene_config.gravity)
     scene_config.gravity = np.array([0.0, 0.0, args.gravity])
+    sapien.physx.set_scene_config(scene_config)
 
     # SAPIEN's default physical material for PhysX can be modified at any time
     # It is not bound to a scene
@@ -115,7 +116,7 @@ def main():
     # by default, SAPIEN scene consists of PhysxSystem and RenderSystem
     # The PhysxSystem can take a PhysxSceneConfig to custom its behavior
     scene = sapien.Scene([
-        sapien.physx.PhysxSystem(scene_config),
+        sapien.physx.PhysxCpuSystem(),
         sapien.render.RenderSystem(),
     ])
     scene.set_timestep(1 / 100.0)

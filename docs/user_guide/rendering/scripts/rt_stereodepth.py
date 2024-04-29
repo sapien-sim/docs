@@ -1,10 +1,10 @@
-import sapien.core as sapien
-import numpy as np
 import matplotlib.pyplot as plt
-import open3d as o3d
+import numpy as np
+import sapien.core as sapien
+import trimesh
 from sapien.core import Pose
-from sapien.sensor import StereoDepthSensor, StereoDepthSensorConfig
 from sapien.render import RenderTexture2D
+from sapien.sensor import StereoDepthSensor, StereoDepthSensorConfig
 
 
 def build_scene(sim, renderer):
@@ -114,9 +114,7 @@ def main():
     plt.show()
 
     pc = sensor.get_pointcloud(with_rgb=True) # From RGB camera's view with x rightward, y downward, z forward
-    pcd = o3d.geometry.PointCloud(o3d.utility.Vector3dVector(pc[..., :3] * np.array([1, -1, -1]))) # Change axis direction for easier view
-    pcd.colors = o3d.utility.Vector3dVector(pc[..., 3:])
-    o3d.visualization.draw_geometries([pcd])
+    trimesh.PointCloud(pc[..., :3] * np.array([1, -1, -1]), pc[..., 3:]).show()
 
 
 main()

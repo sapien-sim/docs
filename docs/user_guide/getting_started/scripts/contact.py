@@ -49,9 +49,9 @@ def main():
             print("Normal (same direction as impulse):", point.normal)
             print("Contact position (in the world frame):", point.position)
             print("Minimum distance between two shapes:", point.separation)
-            if contact.components[0].entity.name == "box2":
+            if contact.bodies[0].entity.name == "box2":
                 support_force += point.impulse[2] / dt
-            elif contact.components[0].entity.name == "box1":
+            elif contact.bodies[0].entity.name == "box1":
                 support_force -= point.impulse[2] / dt
             else:
                 raise RuntimeError("Impossible case in this example.")
