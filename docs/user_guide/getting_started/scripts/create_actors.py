@@ -219,7 +219,7 @@ def main():
     builder.add_convex_collision_from_file(
         filename="../assets/banana/collision_meshes/collision.obj"
     )
-    builder.add_visual_from_file(filename="../assets/banana/visual_meshes/visual.dae")
+    builder.add_visual_from_file(filename="../assets/banana/visual_meshes/visual.glb")
     mesh = builder.build(name="mesh")
     mesh.set_pose(sapien.Pose(p=[-0.2, 0, 1.0 + 0.05]))
 

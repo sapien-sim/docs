@@ -17,7 +17,7 @@ In this tutorial, you will learn the following:
 
 The full script can be downloaded here :download:`create_actors.py <scripts/create_actors.py>`.
 The collision and visual meshes of the banana are avilable at
-:download:`collision.obj <assets/banana/collision_meshes/collision.obj>` and :download:`visual.dae <assets/banana/visual_meshes/visual.dae>`
+:download:`collision.obj <assets/banana/collision_meshes/collision.obj>` and :download:`visual.glb <assets/banana/visual_meshes/visual.glb>`
 
 
 .. figure:: assets/create_actors.png
