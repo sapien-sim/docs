@@ -13,3 +13,4 @@ sphinx-subfigure
 sphinxcontrib-video
 sphinx-togglebutton
 sphinx_design
+sapien>=3.0.0b0
