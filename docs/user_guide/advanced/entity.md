@@ -64,7 +64,6 @@ and cameras to perform rendering.
 
 :::{note}
    While SAPIEN features `Entity`, `Component`, and `System`. SAPIEN is
-   not an `ECS (Entity component system)
-   <https://en.wikipedia.org/wiki/Entity_component_system>`_ architecture but
-   simply borrows the concepts from ECS, similar to the Unity game engine.
+   not an [ECS (Entity component system)](https://en.wikipedia.org/wiki/Entity_component_system)
+   architecture but simply borrows the concepts from ECS, similar to the Unity game engine.
 :::
