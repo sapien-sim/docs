@@ -6,7 +6,12 @@ Build Gym-style Interface
 .. highlight:: python
 
 .. note::
-   Please first complete Get started before continuing this tutorial.
+   We strongly recommend `ManiSkill <https://github.com/haosulab/ManiSkill>`_
+   if you are looking for prebuilt reinforcement learning environments or want
+   to build your own environments for a serious project.
+
+   This page shows how to build a minimal RL environment from scratch to give
+   some insights on how ManiSkill is built.
 
 `Gymnasium (previously Gym) <https://gymnasium.farama.org/>`_ is widely used for
 research on reinforcement learning. It provides a base class ``gymnasium.Env``

@@ -6,7 +6,12 @@ Basic Manipulation
 .. highlight:: python
 
 .. note::
-   Please first complete :ref:`gym` before continuing this tutorial.
+   We strongly recommend `ManiSkill <https://github.com/haosulab/ManiSkill>`_
+   if you are looking for prebuilt reinforcement learning environments or want
+   to build your own environments for a serious project.
+
+   This page shows how to build a minimal RL environment from scratch to give
+   some insights on how ManiSkill is built.
 
 In this tutorial, you will learn the following:
 
